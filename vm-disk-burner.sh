@@ -104,5 +104,14 @@ echo -e "burning disk image to disk done"
 # disable ndb
 echo -e "dismounting disk image ..."
 qemu-nbd --disconnect /dev/nbd0
+sleep 2
 rmmod nbd
 echo -e "dismounting disk image done"
+
+
+# fix partition table, expand partition
+echo -e "fixing partition table ..."
+echo -e "Fix\n" | parted ---pretend-input-tty -l $target
+totalPartitions=$(partx -g $target | wc -l)
+parted $target resizepart $totalPartitions 100%
+echo -e "fixing partition table done"
